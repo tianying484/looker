@@ -10,12 +10,14 @@ import (
 func main() {
     var (
         err          error
-        lookerId     int64  = 465
+        lookerId     int64  = 684
         limit        int64  = 5000
         resultFormat string = "csv"
+        lookerIni    string = `./looker.ini`
     )
+
     // Read settings from ini file
-    cfg, err := rtl.NewSettingsFromFile("./looker.ini", nil)
+    cfg, err := rtl.NewSettingsFromFile(lookerIni, nil)
     checkErr(err)
 
     // New instance of LookerSDK
