@@ -24,7 +24,7 @@ func NewSettings() *ApiSettings {
 
 func (a *ApiSettings) WithBaseUrl(BaseUrl string) *ApiSettings {
     a.BaseUrl = BaseUrl
-    return a
+    return a.withApiVersion()
 }
 func (a *ApiSettings) WithVerifySsl(VerifySsl bool) *ApiSettings {
     a.VerifySsl = VerifySsl
@@ -40,6 +40,10 @@ func (a *ApiSettings) WithClientId(ClientId string) *ApiSettings {
 }
 func (a *ApiSettings) WithClientSecret(ClientSecret string) *ApiSettings {
     a.ClientSecret = ClientSecret
+    return a
+}
+func (a *ApiSettings) withApiVersion() *ApiSettings {
+    a.ApiVersion = DefaultApiVersion
     return a
 }
 
