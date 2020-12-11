@@ -36,7 +36,6 @@ package v4
 
 import (
     "github.com/tianying484/looker/rtl"
-    "net/url"
     "time"
 )
 
@@ -68,7 +67,7 @@ type ApiVersionElement struct {
     Version     *string  `json:"version,omitempty"`      // Version number as it appears in '/api/xxx/' urls
     FullVersion *string  `json:"full_version,omitempty"` // Full version number including minor version
     Status      *string  `json:"status,omitempty"`       // Status of this version
-    SwaggerUrl  *url.URL `json:"swagger_url,omitempty"`  // Url for swagger.json for this version
+    SwaggerUrl  *string `json:"swagger_url,omitempty"`  // Url for swagger.json for this version
 }
 
 type BackupConfiguration struct {
@@ -78,7 +77,7 @@ type BackupConfiguration struct {
     CustomS3BucketRegion *string          `json:"custom_s3_bucket_region,omitempty"` // Name of region where the bucket is located
     CustomS3Key          *string          `json:"custom_s3_key,omitempty"`           // (Write-Only) AWS S3 key used for custom-s3 backups
     CustomS3Secret       *string          `json:"custom_s3_secret,omitempty"`        // (Write-Only) AWS S3 secret used for custom-s3 backups
-    Url                  *url.URL         `json:"url,omitempty"`                     // Link to get this item
+    Url                  *string         `json:"url,omitempty"`                     // Link to get this item
 }
 
 type Board struct {
@@ -398,7 +397,7 @@ type CredentialsApi3 struct {
     CreatedAt  *string          `json:"created_at,omitempty"`  // Timestamp for the creation of this credential
     IsDisabled *bool            `json:"is_disabled,omitempty"` // Has this credential been disabled?
     Type       *string          `json:"type,omitempty"`        // Short name for the type of this kind of credential
-    Url        *url.URL         `json:"url,omitempty"`         // Link to get this item
+    Url        *string         `json:"url,omitempty"`         // Link to get this item
 }
 
 type CredentialsEmail struct {
@@ -410,8 +409,8 @@ type CredentialsEmail struct {
     LoggedInAt                     *string          `json:"logged_in_at,omitempty"`                        // Timestamp for most recent login using credential
     PasswordResetUrl               *string          `json:"password_reset_url,omitempty"`                  // Url with one-time use secret token that the user can use to reset password
     Type                           *string          `json:"type,omitempty"`                                // Short name for the type of this kind of credential
-    Url                            *url.URL         `json:"url,omitempty"`                                 // Link to get this item
-    UserUrl                        *url.URL         `json:"user_url,omitempty"`                            // Link to get this user
+    Url                            *string         `json:"url,omitempty"`                                 // Link to get this item
+    UserUrl                        *string         `json:"user_url,omitempty"`                            // Link to get this user
 }
 
 type CredentialsEmbed struct {
@@ -423,7 +422,7 @@ type CredentialsEmbed struct {
     IsDisabled      *bool            `json:"is_disabled,omitempty"`       // Has this credential been disabled?
     LoggedInAt      *string          `json:"logged_in_at,omitempty"`      // Timestamp for most recent login using credential
     Type            *string          `json:"type,omitempty"`              // Short name for the type of this kind of credential
-    Url             *url.URL         `json:"url,omitempty"`               // Link to get this item
+    Url             *string         `json:"url,omitempty"`               // Link to get this item
 }
 
 type CredentialsGoogle struct {
@@ -435,7 +434,7 @@ type CredentialsGoogle struct {
     IsDisabled   *bool            `json:"is_disabled,omitempty"`    // Has this credential been disabled?
     LoggedInAt   *string          `json:"logged_in_at,omitempty"`   // Timestamp for most recent login using credential
     Type         *string          `json:"type,omitempty"`           // Short name for the type of this kind of credential
-    Url          *url.URL         `json:"url,omitempty"`            // Link to get this item
+    Url          *string         `json:"url,omitempty"`            // Link to get this item
 }
 
 type CredentialsLDAP struct {
@@ -447,7 +446,7 @@ type CredentialsLDAP struct {
     LdapId     *string          `json:"ldap_id,omitempty"`      // LDAP Unique ID for this user
     LoggedInAt *string          `json:"logged_in_at,omitempty"` // Timestamp for most recent login using credential
     Type       *string          `json:"type,omitempty"`         // Short name for the type of this kind of credential
-    Url        *url.URL         `json:"url,omitempty"`          // Link to get this item
+    Url        *string         `json:"url,omitempty"`          // Link to get this item
 }
 
 type CredentialsLookerOpenid struct {
@@ -458,8 +457,8 @@ type CredentialsLookerOpenid struct {
     LoggedInAt *string          `json:"logged_in_at,omitempty"` // Timestamp for most recent login using credential
     LoggedInIp *string          `json:"logged_in_ip,omitempty"` // IP address of client for most recent login using credential
     Type       *string          `json:"type,omitempty"`         // Short name for the type of this kind of credential
-    Url        *url.URL         `json:"url,omitempty"`          // Link to get this item
-    UserUrl    *url.URL         `json:"user_url,omitempty"`     // Link to get this user
+    Url        *string         `json:"url,omitempty"`          // Link to get this item
+    UserUrl    *string         `json:"user_url,omitempty"`     // Link to get this user
 }
 
 type CredentialsOIDC struct {
@@ -470,7 +469,7 @@ type CredentialsOIDC struct {
     LoggedInAt *string          `json:"logged_in_at,omitempty"` // Timestamp for most recent login using credential
     OidcUserId *string          `json:"oidc_user_id,omitempty"` // OIDC OP's Unique ID for this user
     Type       *string          `json:"type,omitempty"`         // Short name for the type of this kind of credential
-    Url        *url.URL         `json:"url,omitempty"`          // Link to get this item
+    Url        *string         `json:"url,omitempty"`          // Link to get this item
 }
 
 type CredentialsSaml struct {
@@ -481,7 +480,7 @@ type CredentialsSaml struct {
     LoggedInAt *string          `json:"logged_in_at,omitempty"` // Timestamp for most recent login using credential
     SamlUserId *string          `json:"saml_user_id,omitempty"` // Saml IdP's Unique ID for this user
     Type       *string          `json:"type,omitempty"`         // Short name for the type of this kind of credential
-    Url        *url.URL         `json:"url,omitempty"`          // Link to get this item
+    Url        *string         `json:"url,omitempty"`          // Link to get this item
 }
 
 type CredentialsTotp struct {
@@ -490,7 +489,7 @@ type CredentialsTotp struct {
     IsDisabled *bool            `json:"is_disabled,omitempty"` // Has this credential been disabled?
     Type       *string          `json:"type,omitempty"`        // Short name for the type of this kind of credential
     Verified   *bool            `json:"verified,omitempty"`    // User has verified
-    Url        *url.URL         `json:"url,omitempty"`         // Link to get this item
+    Url        *string         `json:"url,omitempty"`         // Link to get this item
 }
 
 type CustomWelcomeEmail struct {
@@ -525,7 +524,7 @@ type Dashboard struct {
     Deleted             *bool                `json:"deleted,omitempty"`               // Whether or not a dashboard is 'soft' deleted.
     DeletedAt           *time.Time           `json:"deleted_at,omitempty"`            // Time that the Dashboard was 'soft' deleted.
     DeleterId           *int64               `json:"deleter_id,omitempty"`            // Id of User that 'soft' deleted the dashboard.
-    EditUri             *url.URL             `json:"edit_uri,omitempty"`              // Relative path of URI of LookML file to edit the dashboard (LookML dashboard only).
+    EditUri             *string             `json:"edit_uri,omitempty"`              // Relative path of URI of LookML file to edit the dashboard (LookML dashboard only).
     FavoriteCount       *int64               `json:"favorite_count,omitempty"`        // Number of times favorited
     LastAccessedAt      *time.Time           `json:"last_accessed_at,omitempty"`      // Time the dashboard was last accessed
     LastViewedAt        *time.Time           `json:"last_viewed_at,omitempty"`        // Time last viewed in the Looker web UI
@@ -581,7 +580,7 @@ type DashboardElement struct {
     BodyText           *string                                     `json:"body_text,omitempty"`         // Text tile body text
     BodyTextAsHtml     *string                                     `json:"body_text_as_html,omitempty"` // Text tile body text as Html
     DashboardId        *string                                     `json:"dashboard_id,omitempty"`      // Id of Dashboard
-    EditUri            *url.URL                                    `json:"edit_uri,omitempty"`          // Relative path of URI of LookML file to edit the dashboard element (LookML dashboard only).
+    EditUri            *string                                    `json:"edit_uri,omitempty"`          // Relative path of URI of LookML file to edit the dashboard element (LookML dashboard only).
     Id                 *string                                     `json:"id,omitempty"`                // Unique Id
     Look               *LookWithQuery                              `json:"look,omitempty"`
     LookId             *string                                     `json:"look_id,omitempty"`           // Id Of Look
@@ -855,13 +854,13 @@ type DiscretePalette struct {
 }
 
 type EmbedParams struct {
-    TargetUrl        url.URL `json:"target_url"`                   // The complete URL of the Looker UI page to display in the embed context. For example, to display the dashboard with id 34, `target_url` would look like: `https://mycompany.looker.com:9999/dashboards/34`. `target_uri` MUST contain a scheme (HTTPS), domain name, and URL path. Port must be included if it is required to reach the Looker server from browser clients. If the Looker instance is behind a load balancer or other proxy, `target_uri` must be the public-facing domain name and port required to reach the Looker instance, not the actual internal network machine name of the Looker instance.
+    TargetUrl        string `json:"target_url"`                   // The complete URL of the Looker UI page to display in the embed context. For example, to display the dashboard with id 34, `target_url` would look like: `https://mycompany.looker.com:9999/dashboards/34`. `target_uri` MUST contain a scheme (HTTPS), domain name, and URL path. Port must be included if it is required to reach the Looker server from browser clients. If the Looker instance is behind a load balancer or other proxy, `target_uri` must be the public-facing domain name and port required to reach the Looker instance, not the actual internal network machine name of the Looker instance.
     SessionLength    *int64  `json:"session_length,omitempty"`     // Number of seconds the SSO embed session will be valid after the embed session is started. Defaults to 300 seconds. Maximum session length accepted is 2592000 seconds (30 days).
     ForceLogoutLogin *bool   `json:"force_logout_login,omitempty"` // When true, the embed session will purge any residual Looker login state (such as in browser cookies) before creating a new login state with the given embed user info. Defaults to true.
 }
 
 type EmbedSsoParams struct {
-    TargetUrl        url.URL                 `json:"target_url"`                   // The complete URL of the Looker UI page to display in the embed context. For example, to display the dashboard with id 34, `target_url` would look like: `https://mycompany.looker.com:9999/dashboards/34`. `target_uri` MUST contain a scheme (HTTPS), domain name, and URL path. Port must be included if it is required to reach the Looker server from browser clients. If the Looker instance is behind a load balancer or other proxy, `target_uri` must be the public-facing domain name and port required to reach the Looker instance, not the actual internal network machine name of the Looker instance.
+    TargetUrl        string                 `json:"target_url"`                   // The complete URL of the Looker UI page to display in the embed context. For example, to display the dashboard with id 34, `target_url` would look like: `https://mycompany.looker.com:9999/dashboards/34`. `target_uri` MUST contain a scheme (HTTPS), domain name, and URL path. Port must be included if it is required to reach the Looker server from browser clients. If the Looker instance is behind a load balancer or other proxy, `target_uri` must be the public-facing domain name and port required to reach the Looker instance, not the actual internal network machine name of the Looker instance.
     SessionLength    *int64                  `json:"session_length,omitempty"`     // Number of seconds the SSO embed session will be valid after the embed session is started. Defaults to 300 seconds. Maximum session length accepted is 2592000 seconds (30 days).
     ForceLogoutLogin *bool                   `json:"force_logout_login,omitempty"` // When true, the embed session will purge any residual Looker login state (such as in browser cookies) before creating a new login state with the given embed user info. Defaults to true.
     ExternalUserId   *string                 `json:"external_user_id,omitempty"`   // A value from an external system that uniquely identifies the embed user. Since the user_ids of Looker embed users may change with every embed session, external_user_id provides a way to assign a known, stable user identifier across multiple embed sessions.
@@ -882,7 +881,7 @@ type EmbedUrlResponse struct {
 
 type Error struct {
     Message          string  `json:"message"`           // Error details
-    DocumentationUrl url.URL `json:"documentation_url"` // Documentation link
+    DocumentationUrl string `json:"documentation_url"` // Documentation link
 }
 
 type FillStyle string
@@ -1193,7 +1192,7 @@ type LDAPConfig struct {
     AllowNormalGroupMembership *bool                     `json:"allow_normal_group_membership,omitempty"`  // Allow LDAP auth'd users to be members of non-reflected Looker groups. If 'false', user will be removed from non-reflected groups on login.
     AllowRolesFromNormalGroups *bool                     `json:"allow_roles_from_normal_groups,omitempty"` // LDAP auth'd users will be able to inherit roles from non-reflected Looker groups.
     AllowDirectRoles           *bool                     `json:"allow_direct_roles,omitempty"`             // Allows roles to be directly assigned to LDAP auth'd users.
-    Url                        *url.URL                  `json:"url,omitempty"`                            // Link to get this item
+    Url                        *string                  `json:"url,omitempty"`                            // Link to get this item
 }
 
 type LDAPConfigTestIssue struct {
@@ -1208,7 +1207,7 @@ type LDAPConfigTestResult struct {
     Status  *string                `json:"status,omitempty"`  // Test status code: always 'success' or 'error'
     Trace   *string                `json:"trace,omitempty"`   // A more detailed trace of incremental results during auth tests
     User    *LDAPUser              `json:"user,omitempty"`
-    Url     *url.URL               `json:"url,omitempty"` // Link to ldap config
+    Url     *string               `json:"url,omitempty"` // Link to ldap config
 }
 
 type LDAPGroupRead struct {
@@ -1217,7 +1216,7 @@ type LDAPGroupRead struct {
     LookerGroupName *string  `json:"looker_group_name,omitempty"` // Name of group in Looker
     Name            *string  `json:"name,omitempty"`              // Name of group in LDAP
     Roles           *[]Role  `json:"roles,omitempty"`             // Looker Roles
-    Url             *url.URL `json:"url,omitempty"`               // Link to ldap config
+    Url             *string `json:"url,omitempty"`               // Link to ldap config
 }
 
 type LDAPGroupWrite struct {
@@ -1226,7 +1225,7 @@ type LDAPGroupWrite struct {
     LookerGroupName *string  `json:"looker_group_name,omitempty"` // Name of group in Looker
     Name            *string  `json:"name,omitempty"`              // Name of group in LDAP
     RoleIds         *[]int64 `json:"role_ids,omitempty"`          // Looker Role Ids
-    Url             *url.URL `json:"url,omitempty"`               // Link to ldap config
+    Url             *string `json:"url,omitempty"`               // Link to ldap config
 }
 
 type LDAPUser struct {
@@ -1239,21 +1238,21 @@ type LDAPUser struct {
     LdapDn     *string                 `json:"ldap_dn,omitempty"`    // LDAP's distinguished name for the user record
     LdapId     *string                 `json:"ldap_id,omitempty"`    // LDAP's Unique ID for the user
     Roles      *[]string               `json:"roles,omitempty"`      // Array of user's roles (role names only)
-    Url        *url.URL                `json:"url,omitempty"`        // Link to ldap config
+    Url        *string                `json:"url,omitempty"`        // Link to ldap config
 }
 
 type LDAPUserAttributeRead struct {
     Name           *string          `json:"name,omitempty"`            // Name of User Attribute in LDAP
     Required       *bool            `json:"required,omitempty"`        // Required to be in LDAP assertion for login to be allowed to succeed
     UserAttributes *[]UserAttribute `json:"user_attributes,omitempty"` // Looker User Attributes
-    Url            *url.URL         `json:"url,omitempty"`             // Link to ldap config
+    Url            *string         `json:"url,omitempty"`             // Link to ldap config
 }
 
 type LDAPUserAttributeWrite struct {
     Name             *string  `json:"name,omitempty"`               // Name of User Attribute in LDAP
     Required         *bool    `json:"required,omitempty"`           // Required to be in LDAP assertion for login to be allowed to succeed
     UserAttributeIds *[]int64 `json:"user_attribute_ids,omitempty"` // Looker User Attribute Ids
-    Url              *url.URL `json:"url,omitempty"`                // Link to ldap config
+    Url              *string `json:"url,omitempty"`                // Link to ldap config
 }
 
 type LegacyFeature struct {
@@ -1678,7 +1677,7 @@ type ModelSet struct {
     Id        *int64           `json:"id,omitempty"` // Unique Id
     Models    *[]string        `json:"models,omitempty"`
     Name      *string          `json:"name,omitempty"` // Name of ModelSet
-    Url       *url.URL         `json:"url,omitempty"`  // Link to get this item
+    Url       *string         `json:"url,omitempty"`  // Link to get this item
 }
 
 type ModelsNotValidated struct {
@@ -1716,7 +1715,7 @@ type OIDCConfig struct {
     AlternateEmailLoginAllowed *bool                     `json:"alternate_email_login_allowed,omitempty"`  // Allow alternate email-based login via '/login/email' for admins and for specified users with the 'login_special_email' permission. This option is useful as a fallback during ldap setup, if ldap config problems occur later, or if you need to support some users who are not in your ldap directory. Looker email/password logins are always disabled for regular users when ldap is enabled.
     Audience                   *string                   `json:"audience,omitempty"`                       // OpenID Provider Audience
     AuthRequiresRole           *bool                     `json:"auth_requires_role,omitempty"`             // Users will not be allowed to login at all unless a role for them is found in OIDC if set to true
-    AuthorizationEndpoint      *url.URL                  `json:"authorization_endpoint,omitempty"`         // OpenID Provider Authorization Url
+    AuthorizationEndpoint      *string                  `json:"authorization_endpoint,omitempty"`         // OpenID Provider Authorization Url
     DefaultNewUserGroupIds     *[]int64                  `json:"default_new_user_group_ids,omitempty"`     // (Write-Only) Array of ids of groups that will be applied to new users the first time they login via OIDC
     DefaultNewUserGroups       *[]Group                  `json:"default_new_user_groups,omitempty"`        // (Read-only) Groups that will be applied to new users the first time they login via OIDC
     DefaultNewUserRoleIds      *[]int64                  `json:"default_new_user_role_ids,omitempty"`      // (Write-Only) Array of ids of roles that will be applied to new users the first time they login via OIDC
@@ -1740,11 +1739,11 @@ type OIDCConfig struct {
     UserAttributeMapLastName   *string                   `json:"user_attribute_map_last_name,omitempty"`   // Name of user record attributes used to indicate last name
     UserAttributes             *[]OIDCUserAttributeRead  `json:"user_attributes,omitempty"`                // (Read-only) Array of mappings between OIDC User Attributes and Looker User Attributes
     UserAttributesWithIds      *[]OIDCUserAttributeWrite `json:"user_attributes_with_ids,omitempty"`       // (Read/Write) Array of mappings between OIDC User Attributes and arrays of Looker User Attribute ids
-    UserinfoEndpoint           *url.URL                  `json:"userinfo_endpoint,omitempty"`              // OpenID Provider User Information Url
+    UserinfoEndpoint           *string                  `json:"userinfo_endpoint,omitempty"`              // OpenID Provider User Information Url
     AllowNormalGroupMembership *bool                     `json:"allow_normal_group_membership,omitempty"`  // Allow OIDC auth'd users to be members of non-reflected Looker groups. If 'false', user will be removed from non-reflected groups on login.
     AllowRolesFromNormalGroups *bool                     `json:"allow_roles_from_normal_groups,omitempty"` // OIDC auth'd users will inherit roles from non-reflected Looker groups.
     AllowDirectRoles           *bool                     `json:"allow_direct_roles,omitempty"`             // Allows roles to be directly assigned to OIDC auth'd users.
-    Url                        *url.URL                  `json:"url,omitempty"`                            // Link to get this item
+    Url                        *string                  `json:"url,omitempty"`                            // Link to get this item
 }
 
 type OIDCGroupRead struct {
@@ -1797,7 +1796,7 @@ type PermissionSet struct {
     Id          *int64           `json:"id,omitempty"`   // Unique Id
     Name        *string          `json:"name,omitempty"` // Name of PermissionSet
     Permissions *[]string        `json:"permissions,omitempty"`
-    Url         *url.URL         `json:"url,omitempty"` // Link to get this item
+    Url         *string         `json:"url,omitempty"` // Link to get this item
 }
 
 type PermissionType string
@@ -2541,8 +2540,8 @@ type Role struct {
     PermissionSetId *int64           `json:"permission_set_id,omitempty"` // (Write-Only) Id of permission set
     ModelSet        *ModelSet        `json:"model_set,omitempty"`
     ModelSetId      *int64           `json:"model_set_id,omitempty"` // (Write-Only) Id of model set
-    Url             *url.URL         `json:"url,omitempty"`          // Link to get this item
-    UsersUrl        *url.URL         `json:"users_url,omitempty"`    // Link to get list of users with this role
+    Url             *string         `json:"url,omitempty"`          // Link to get this item
+    UsersUrl        *string         `json:"users_url,omitempty"`    // Link to get list of users with this role
 }
 
 type RunningQueries struct {
@@ -2602,7 +2601,7 @@ type SamlConfig struct {
     AllowNormalGroupMembership *bool                     `json:"allow_normal_group_membership,omitempty"`  // Allow SAML auth'd users to be members of non-reflected Looker groups. If 'false', user will be removed from non-reflected groups on login.
     AllowRolesFromNormalGroups *bool                     `json:"allow_roles_from_normal_groups,omitempty"` // SAML auth'd users will inherit roles from non-reflected Looker groups.
     AllowDirectRoles           *bool                     `json:"allow_direct_roles,omitempty"`             // Allows roles to be directly assigned to SAML auth'd users.
-    Url                        *url.URL                  `json:"url,omitempty"`                            // Link to get this item
+    Url                        *string                  `json:"url,omitempty"`                            // Link to get this item
 }
 
 type SamlGroupRead struct {
@@ -2611,7 +2610,7 @@ type SamlGroupRead struct {
     LookerGroupName *string  `json:"looker_group_name,omitempty"` // Name of group in Looker
     Name            *string  `json:"name,omitempty"`              // Name of group in Saml
     Roles           *[]Role  `json:"roles,omitempty"`             // Looker Roles
-    Url             *url.URL `json:"url,omitempty"`               // Link to saml config
+    Url             *string `json:"url,omitempty"`               // Link to saml config
 }
 
 type SamlGroupWrite struct {
@@ -2620,7 +2619,7 @@ type SamlGroupWrite struct {
     LookerGroupName *string  `json:"looker_group_name,omitempty"` // Name of group in Looker
     Name            *string  `json:"name,omitempty"`              // Name of group in Saml
     RoleIds         *[]int64 `json:"role_ids,omitempty"`          // Looker Role Ids
-    Url             *url.URL `json:"url,omitempty"`               // Link to saml config
+    Url             *string `json:"url,omitempty"`               // Link to saml config
 }
 
 type SamlMetadataParseResult struct {
@@ -2634,14 +2633,14 @@ type SamlUserAttributeRead struct {
     Name           *string          `json:"name,omitempty"`            // Name of User Attribute in Saml
     Required       *bool            `json:"required,omitempty"`        // Required to be in Saml assertion for login to be allowed to succeed
     UserAttributes *[]UserAttribute `json:"user_attributes,omitempty"` // Looker User Attributes
-    Url            *url.URL         `json:"url,omitempty"`             // Link to saml config
+    Url            *string         `json:"url,omitempty"`             // Link to saml config
 }
 
 type SamlUserAttributeWrite struct {
     Name             *string  `json:"name,omitempty"`               // Name of User Attribute in Saml
     Required         *bool    `json:"required,omitempty"`           // Required to be in Saml assertion for login to be allowed to succeed
     UserAttributeIds *[]int64 `json:"user_attribute_ids,omitempty"` // Looker User Attribute Ids
-    Url              *url.URL `json:"url,omitempty"`                // Link to saml config
+    Url              *string `json:"url,omitempty"`                // Link to saml config
 }
 
 type ScheduledPlan struct {
@@ -2749,7 +2748,7 @@ type Session struct {
     SudoUserId      *int64           `json:"sudo_user_id,omitempty"`     // Actual user in the case when this session represents one user sudo'ing as another
     CreatedAt       *string          `json:"created_at,omitempty"`       // Time when this session was initiated
     ExpiresAt       *string          `json:"expires_at,omitempty"`       // Time when this session will expire
-    Url             *url.URL         `json:"url,omitempty"`              // Link to get this item
+    Url             *string         `json:"url,omitempty"`              // Link to get this item
 }
 
 type SessionConfig struct {
@@ -2906,8 +2905,8 @@ type UpdateFolder struct {
 
 type User struct {
     Can                        *map[string]bool         `json:"can,omitempty"`                       // Operations the current user is able to perform on this object
-    AvatarUrl                  *url.URL                 `json:"avatar_url,omitempty"`                // URL for the avatar image (may be generic)
-    AvatarUrlWithoutSizing     *url.URL                 `json:"avatar_url_without_sizing,omitempty"` // URL for the avatar image (may be generic), does not specify size
+    AvatarUrl                  *string                  `json:"avatar_url,omitempty"`                // URL for the avatar image (may be generic)
+    AvatarUrlWithoutSizing     *string                  `json:"avatar_url_without_sizing,omitempty"` // URL for the avatar image (may be generic), does not specify size
     CredentialsApi3            *[]CredentialsApi3       `json:"credentials_api3,omitempty"`          // API 3 credentials
     CredentialsEmail           *CredentialsEmail        `json:"credentials_email,omitempty"`
     CredentialsEmbed           *[]CredentialsEmbed      `json:"credentials_embed,omitempty"` // Embed credentials
@@ -2939,7 +2938,7 @@ type User struct {
     AllowDirectRoles           *bool                    `json:"allow_direct_roles,omitempty"`             // User can be directly assigned a role.
     AllowNormalGroupMembership *bool                    `json:"allow_normal_group_membership,omitempty"`  // User can be a direct member of a normal Looker group.
     AllowRolesFromNormalGroups *bool                    `json:"allow_roles_from_normal_groups,omitempty"` // User can inherit roles from a normal Looker group.
-    Url                        *url.URL                 `json:"url,omitempty"`                            // Link to get this item
+    Url                        *string                 `json:"url,omitempty"`                            // Link to get this item
 }
 
 type UserAttribute struct {
@@ -3012,21 +3011,21 @@ type UserPublic struct {
     FirstName   *string          `json:"first_name,omitempty"`   // First Name
     LastName    *string          `json:"last_name,omitempty"`    // Last Name
     DisplayName *string          `json:"display_name,omitempty"` // Full name for display (available only if both first_name and last_name are set)
-    AvatarUrl   *url.URL         `json:"avatar_url,omitempty"`   // URL for the avatar image (may be generic)
-    Url         *url.URL         `json:"url,omitempty"`          // Link to get this item
+    AvatarUrl   *string         `json:"avatar_url,omitempty"`   // URL for the avatar image (may be generic)
+    Url         *string         `json:"url,omitempty"`          // Link to get this item
 }
 
 type ValidationError struct {
     Message          string                   `json:"message"`           // Error details
     Errors           *[]ValidationErrorDetail `json:"errors,omitempty"`  // Error detail array
-    DocumentationUrl url.URL                  `json:"documentation_url"` // Documentation link
+    DocumentationUrl string                  `json:"documentation_url"` // Documentation link
 }
 
 type ValidationErrorDetail struct {
     Field            *string `json:"field,omitempty"`   // Field with error
     Code             *string `json:"code,omitempty"`    // Error code
     Message          *string `json:"message,omitempty"` // Error info message
-    DocumentationUrl url.URL `json:"documentation_url"` // Documentation link
+    DocumentationUrl string `json:"documentation_url"` // Documentation link
 }
 
 type WeekStartDay string
@@ -3502,7 +3501,7 @@ type WriteOIDCConfig struct {
     AlternateEmailLoginAllowed *bool                     `json:"alternate_email_login_allowed,omitempty"`  // Allow alternate email-based login via '/login/email' for admins and for specified users with the 'login_special_email' permission. This option is useful as a fallback during ldap setup, if ldap config problems occur later, or if you need to support some users who are not in your ldap directory. Looker email/password logins are always disabled for regular users when ldap is enabled.
     Audience                   *string                   `json:"audience,omitempty"`                       // OpenID Provider Audience
     AuthRequiresRole           *bool                     `json:"auth_requires_role,omitempty"`             // Users will not be allowed to login at all unless a role for them is found in OIDC if set to true
-    AuthorizationEndpoint      *url.URL                  `json:"authorization_endpoint,omitempty"`         // OpenID Provider Authorization Url
+    AuthorizationEndpoint      *string                  `json:"authorization_endpoint,omitempty"`         // OpenID Provider Authorization Url
     DefaultNewUserGroupIds     *[]int64                  `json:"default_new_user_group_ids,omitempty"`     // (Write-Only) Array of ids of groups that will be applied to new users the first time they login via OIDC
     DefaultNewUserRoleIds      *[]int64                  `json:"default_new_user_role_ids,omitempty"`      // (Write-Only) Array of ids of roles that will be applied to new users the first time they login via OIDC
     Enabled                    *bool                     `json:"enabled,omitempty"`                        // Enable/Disable OIDC authentication for the server
@@ -3519,7 +3518,7 @@ type WriteOIDCConfig struct {
     UserAttributeMapFirstName  *string                   `json:"user_attribute_map_first_name,omitempty"`  // Name of user record attributes used to indicate first name
     UserAttributeMapLastName   *string                   `json:"user_attribute_map_last_name,omitempty"`   // Name of user record attributes used to indicate last name
     UserAttributesWithIds      *[]OIDCUserAttributeWrite `json:"user_attributes_with_ids,omitempty"`       // (Read/Write) Array of mappings between OIDC User Attributes and arrays of Looker User Attribute ids
-    UserinfoEndpoint           *url.URL                  `json:"userinfo_endpoint,omitempty"`              // OpenID Provider User Information Url
+    UserinfoEndpoint           *string                  `json:"userinfo_endpoint,omitempty"`              // OpenID Provider User Information Url
     AllowNormalGroupMembership *bool                     `json:"allow_normal_group_membership,omitempty"`  // Allow OIDC auth'd users to be members of non-reflected Looker groups. If 'false', user will be removed from non-reflected groups on login.
     AllowRolesFromNormalGroups *bool                     `json:"allow_roles_from_normal_groups,omitempty"` // OIDC auth'd users will inherit roles from non-reflected Looker groups.
     AllowDirectRoles           *bool                     `json:"allow_direct_roles,omitempty"`             // Allows roles to be directly assigned to OIDC auth'd users.
