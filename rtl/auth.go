@@ -46,14 +46,14 @@ func NewAuthSession(config ApiSettings) *AuthSession {
 		},
 	}
 	return &AuthSession{
-		Config: config,
+		Config:    config,
 		Transport: tr,
 	}
 }
 
 func NewAuthSessionWithTransport(config ApiSettings, transport http.RoundTripper) *AuthSession {
 	return &AuthSession{
-		Config: config,
+		Config:    config,
 		Transport: transport,
 	}
 }
@@ -121,7 +121,6 @@ func (s *AuthSession) Do(result interface{}, method, ver, path string, reqPars m
 		return err
 	}
 
-
 	cl := http.Client{
 		Transport: s.Transport,
 		Timeout:   time.Duration(s.Config.Timeout) * time.Second,
@@ -133,10 +132,15 @@ func (s *AuthSession) Do(result interface{}, method, ver, path string, reqPars m
 		return err
 	}
 	defer res.Body.Close()
-	
 
 	if res.StatusCode < 200 || res.StatusCode > 226 {
 		return fmt.Errorf("response error: %s", res.Status)
+	}
+
+	if result, ok := result.(*string); ok {
+		bs, err := ioutil.ReadAll(res.Body)
+		*result = string(bs)
+		return err
 	}
 
 	err = json.NewDecoder(res.Body).Decode(&result)
