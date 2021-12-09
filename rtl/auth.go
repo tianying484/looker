@@ -1,226 +1,214 @@
 package rtl
 
 import (
-    "bytes"
-    "crypto/tls"
-    "encoding/json"
-    "fmt"
-    "io"
-    "io/ioutil"
-    "net/http"
-    "net/url"
-    "os"
-    "reflect"
-    "time"
+	"bytes"
+	"crypto/tls"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+	"os"
+	"reflect"
+	"time"
 )
 
 type AccessToken struct {
-    AccessToken string `json:"access_token"`
-    TokenType   string `json:"token_type"`
-    ExpiresIn   int32  `json:"expires_in"`
-    ExpireTime  time.Time
+	AccessToken string `json:"access_token"`
+	TokenType   string `json:"token_type"`
+	ExpiresIn   int32  `json:"expires_in"`
+	ExpireTime  time.Time
 }
 
 func (t AccessToken) IsExpired() bool {
-    return t.ExpireTime.IsZero() || time.Now().After(t.ExpireTime)
+	return t.ExpireTime.IsZero() || time.Now().After(t.ExpireTime)
 }
 
 func NewAccessToken(js []byte) (AccessToken, error) {
-    token := AccessToken{}
-    if err := json.Unmarshal(js, &token); err != nil {
-        return token, err
-    }
-    token.ExpireTime = time.Now().Add(time.Duration(token.ExpiresIn) * time.Second)
-    return token, nil
+	token := AccessToken{}
+	if err := json.Unmarshal(js, &token); err != nil {
+		return token, err
+	}
+	token.ExpireTime = time.Now().Add(time.Duration(token.ExpiresIn) * time.Second)
+	return token, nil
 }
 
 type AuthSession struct {
-    Config ApiSettings
-    token  AccessToken
+	Config    ApiSettings
+	Transport http.RoundTripper
+	token     AccessToken
 }
 
 func NewAuthSession(config ApiSettings) *AuthSession {
-    return &AuthSession{
-        Config: config,
-    }
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: config.VerifySsl,
+		},
+	}
+	return &AuthSession{
+		Config: config,
+		Transport: tr,
+	}
+}
+
+func NewAuthSessionWithTransport(config ApiSettings, transport http.RoundTripper) *AuthSession {
+	return &AuthSession{
+		Config: config,
+		Transport: transport,
+	}
 }
 
 func (s *AuthSession) login(id *string) error {
-    u := fmt.Sprintf("%s/api/%s/login", s.Config.BaseUrl, s.Config.ApiVersion)
-    data := url.Values{
-        "client_id":     {s.Config.ClientId},
-        "client_secret": {s.Config.ClientSecret},
-    }
-    tran := &(*http.DefaultTransport.(*http.Transport))
-    tran.TLSClientConfig = &tls.Config{InsecureSkipVerify: !s.Config.VerifySsl}
-    cl := http.Client{
-        Transport: tran,
-        Timeout:   time.Duration(s.Config.Timeout) * time.Second,
-    }
-    res, err := cl.PostForm(u, data)
-    if err != nil {
-        return err
-    }
+	u := fmt.Sprintf("%s/api/%s/login", s.Config.BaseUrl, s.Config.ApiVersion)
+	data := url.Values{
+		"client_id":     {s.Config.ClientId},
+		"client_secret": {s.Config.ClientSecret},
+	}
 
-    if res.StatusCode != http.StatusOK {
-        return fmt.Errorf("status not OK: %s", res.Status)
-    }
+	cl := http.Client{
+		Transport: s.Transport,
+		Timeout:   time.Duration(s.Config.Timeout) * time.Second,
+	}
+	res, err := cl.PostForm(u, data)
+	if err != nil {
+		return err
+	}
 
-    defer res.Body.Close()
-    body, err := ioutil.ReadAll(res.Body)
-    if err != nil {
-        return fmt.Errorf("error reading response Body: %w", err)
-    }
+	if res.StatusCode != http.StatusOK {
+		return fmt.Errorf("status not OK: %s", res.Status)
+	}
 
-    s.token, err = NewAccessToken(body)
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return fmt.Errorf("error reading response body: %w", err)
+	}
 
-    return err
+	s.token, err = NewAccessToken(body)
+
+	return err
 }
 
-// Authenticate checks if the token is expired (do the token refresh if so), and updates the request Header with Authorization
+// Authenticate checks if the token is expired (do the token refresh if so), and updates the request header with Authorization
 func (s *AuthSession) Authenticate(req *http.Request) error {
-    if s.token.IsExpired() {
-        if err := s.login(nil); err != nil {
-            return err
-        }
-    }
-    req.Header.Add("Authorization", fmt.Sprintf("token %s", s.token.AccessToken))
-    return nil
+	if s.token.IsExpired() {
+		if err := s.login(nil); err != nil {
+			return err
+		}
+	}
+	req.Header.Add("Authorization", fmt.Sprintf("token %s", s.token.AccessToken))
+	return nil
 }
 
 func (s *AuthSession) Do(result interface{}, method, ver, path string, reqPars map[string]interface{}, body interface{}, options *ApiSettings) error {
 
-    // prepare URL
-    u := fmt.Sprintf("%s/api%s%s", s.Config.BaseUrl, ver, path)
+	// prepare URL
+	u := fmt.Sprintf("%s/api%s%s", s.Config.BaseUrl, ver, path)
 
-    lookerRequest, err := serializeBody(body)
-    if err != nil {
-        return err
-    }
+	bodyString := serializeBody(body)
 
-    // create new request
-    httpRequest, err := http.NewRequest(method, u, bytes.NewBufferString(lookerRequest.Body))
-    if err != nil {
-        return err
-    }
-    // add header with body request
-    for k, v := range lookerRequest.Header {
-        httpRequest.Header[k] = v
-    }
-    httpRequest.Header.Add("Accept", "application/json")
-    httpRequest.Header.Add("Accept", "text")
+	// create new request
+	req, err := http.NewRequest(method, u, bytes.NewBufferString(bodyString))
+	if err != nil {
+		return err
+	}
 
-    // set query params
-    setQuery(httpRequest.URL, reqPars)
+	// set query params
+	setQuery(req.URL, reqPars)
 
-    // set auth Header
-    if err = s.Authenticate(httpRequest); err != nil {
-        return err
-    }
+	// set auth header
+	if err := s.Authenticate(req); err != nil {
+		return err
+	}
 
-    tran := &(*http.DefaultTransport.(*http.Transport))
-    tran.TLSClientConfig = &tls.Config{InsecureSkipVerify: !s.Config.VerifySsl}
-    httpClient := http.Client{
-        Transport: tran,
-        Timeout:   time.Duration(s.Config.Timeout) * time.Second,
-    }
 
-    // do the actual http call
-    res, err := httpClient.Do(httpRequest)
-    if err != nil {
-        return err
-    }
+	cl := http.Client{
+		Transport: s.Transport,
+		Timeout:   time.Duration(s.Config.Timeout) * time.Second,
+	}
 
-    if res.StatusCode < 200 || res.StatusCode > 226 {
-        return fmt.Errorf("response error: %s", res.Status)
-    }
+	// do the actual http call
+	res, err := cl.Do(req)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+	
 
-    defer res.Body.Close()
+	if res.StatusCode < 200 || res.StatusCode > 226 {
+		return fmt.Errorf("response error: %s", res.Status)
+	}
 
-    if strResult, ok := result.(*string); ok {
-        return decodeQueryResult(strResult, res.Body)
-    }
+	err = json.NewDecoder(res.Body).Decode(&result)
 
-    //respBody, err := ioutil.ReadAll(res.Body)
-    //if err != nil {
-    //    return err
-    //}
-    //fmt.Println(string(respBody))
-    //
-    //return json.Unmarshal(respBody, result)
-    return json.NewDecoder(res.Body).Decode(result)
+	return nil
 }
 
-func decodeQueryResult(result *string, body io.Reader) error {
-    var (
-        err      error
-        respBody []byte
-    )
-    if respBody, err = ioutil.ReadAll(body); err != nil {
-        return err
-    }
-    *result = string(respBody)
-    return nil
+// serializeBody serializes body to a json, if the body is already string, it will just return it unchanged
+func serializeBody(body interface{}) string {
+	ret := ""
+	if body == nil {
+		return ret
+	}
+
+	// get the `body` type
+	kind := reflect.TypeOf(body).Kind()
+	value := reflect.ValueOf(body)
+
+	// check if it is pointer
+	if kind == reflect.Ptr {
+		// if so, use the value kind
+		kind = reflect.ValueOf(body).Elem().Kind()
+		value = reflect.ValueOf(body).Elem()
+	}
+
+	// it is string, return it as it is
+	if kind == reflect.String {
+		return fmt.Sprintf("%v", value)
+	}
+
+	bb, err := json.Marshal(body)
+	if err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "error serializing body: %v", err)
+	}
+
+	return string(bb)
+
 }
 
-type lookerRequest struct {
-    Header http.Header
-    Body   string
+func isStringType(v interface{}) bool {
+	return reflect.ValueOf(v).Kind() == reflect.String
 }
 
-// serializeBody serializes Body to a json, if the Body is already string, it will just return it unchanged
-func serializeBody(body interface{}) (ret lookerRequest, err error) {
-    ret.Header = make(http.Header)
-    if body == nil {
-        return ret, nil
-    }
-
-    // get the `Body` type
-    kind := reflect.TypeOf(body).Kind()
-    value := reflect.ValueOf(body)
-
-    // check if it is pointer
-    if kind == reflect.Ptr {
-        // if so, use the value kind
-        kind = reflect.ValueOf(body).Elem().Kind()
-        value = reflect.ValueOf(body).Elem()
-    }
-
-    // it is string, return it as it is
-    if kind == reflect.String {
-        ret.Body = fmt.Sprintf("%v", value)
-        return ret, nil
-    }
-
-    bb, err := json.Marshal(body)
-    if err != nil {
-        _, _ = fmt.Fprintf(os.Stderr, "error serializing Body: %v", err)
-    }
-    ret.Header.Add("Content-Type", "application/json")
-    ret.Body = string(bb)
-
-    return ret, nil
+func isPtrToStringType(v interface{}) bool {
+	return reflect.ValueOf(v).Type() == reflect.PtrTo(reflect.TypeOf(""))
 }
 
 // setQuery takes the provided parameter map and sets it as query parameters of the provided url
 func setQuery(u *url.URL, pars map[string]interface{}) {
 
-    if pars == nil || u == nil {
-        return
-    }
+	if pars == nil || u == nil {
+		return
+	}
 
-    q := u.Query()
-    for k, v := range pars {
-        // skip nil
-        if v == nil || reflect.ValueOf(v).IsNil() {
-            continue
-        }
-        // marshal the value to json
-        jsn, err := json.Marshal(v)
-        if err != nil {
-            _, _ = fmt.Fprintf(os.Stderr, "error serializing parameter: %s, error: %v", k, err)
-        }
-        q.Add(k, string(jsn))
-    }
-    u.RawQuery = q.Encode()
+	q := u.Query()
+	for k, v := range pars {
+		// skip nil and ""
+		if v == nil || v == "" || (reflect.ValueOf(v).Kind() == reflect.Ptr && reflect.ValueOf(v).IsNil()) {
+			continue
+		}
+		if isPtrToStringType(v) {
+			q.Add(k, *(v.(*string)))
+		} else if isStringType(v) {
+			q.Add(k, v.(string))
+		} else {
+			// marshal the value to json
+			jsn, err := json.Marshal(v)
+			if err != nil {
+				_, _ = fmt.Fprintf(os.Stderr, "error serializing parameter: %s, error: %v", k, err)
+			}
+			q.Add(k, string(jsn))
+		}
+	}
+	u.RawQuery = q.Encode()
 }
