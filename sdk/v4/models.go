@@ -34,7 +34,7 @@ SOFTWARE.
 package v4
 
 import (
-	"github.com/tianying484/looker/rtl"
+	"github.com/tianying484/looker/v4/rtl"
 	"time"
 )
 

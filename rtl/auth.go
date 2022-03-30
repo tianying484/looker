@@ -139,21 +139,21 @@ func (s *AuthSession) Do(result interface{}, method, ver, path string, reqPars m
 	if res.StatusCode < 200 || res.StatusCode > 226 {
 		b, err := ioutil.ReadAll(res.Body)
 		if err != nil {
-				return fmt.Errorf("response error. status=%s. error parsing error body", res.Status)
+			return fmt.Errorf("response error. status=%s. error parsing error body", res.Status)
 		}
 
 		return fmt.Errorf("response error. status=%s. error=%s", res.Status, string(b))
 	}
 
 	// TODO: Make parsing content-type aware. Requires change to go model generation to use interface{} for all union types.
-	// Github Issue: https://github.com/tianying484/looker/issues/1022
+	// Github Issue: https://github.com/tianying484/looker/v4/issues/1022
 	switch v := result.(type) {
 	case *string:
-			b, err := ioutil.ReadAll(res.Body)
-			if err != nil {
-					return err
-			}
-			*v = string(b)
+		b, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			return err
+		}
+		*v = string(b)
 	default:
 		extra.RegisterFuzzyDecoders()
 		return json.NewDecoder(res.Body).Decode(&result)
