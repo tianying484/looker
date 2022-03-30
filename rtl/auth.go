@@ -3,7 +3,6 @@ package rtl
 import (
 	"bytes"
 	"crypto/tls"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -11,6 +10,9 @@ import (
 	"os"
 	"reflect"
 	"time"
+
+	json "github.com/json-iterator/go"
+	extra "github.com/json-iterator/go/extra"
 )
 
 type AccessToken struct {
@@ -42,7 +44,7 @@ type AuthSession struct {
 func NewAuthSession(config ApiSettings) *AuthSession {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{
-			InsecureSkipVerify: config.VerifySsl,
+			InsecureSkipVerify: !config.VerifySsl,
 		},
 	}
 	return &AuthSession{
@@ -51,6 +53,7 @@ func NewAuthSession(config ApiSettings) *AuthSession {
 	}
 }
 
+// The transport parameter may override your VerifySSL setting
 func NewAuthSessionWithTransport(config ApiSettings, transport http.RoundTripper) *AuthSession {
 	return &AuthSession{
 		Config:    config,
@@ -134,16 +137,27 @@ func (s *AuthSession) Do(result interface{}, method, ver, path string, reqPars m
 	defer res.Body.Close()
 
 	if res.StatusCode < 200 || res.StatusCode > 226 {
-		return fmt.Errorf("response error: %s", res.Status)
+		b, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+				return fmt.Errorf("response error. status=%s. error parsing error body", res.Status)
+		}
+
+		return fmt.Errorf("response error. status=%s. error=%s", res.Status, string(b))
 	}
 
-	if result, ok := result.(*string); ok {
-		bs, err := ioutil.ReadAll(res.Body)
-		*result = string(bs)
-		return err
+	// TODO: Make parsing content-type aware. Requires change to go model generation to use interface{} for all union types.
+	// Github Issue: https://github.com/tianying484/looker/issues/1022
+	switch v := result.(type) {
+	case *string:
+			b, err := ioutil.ReadAll(res.Body)
+			if err != nil {
+					return err
+			}
+			*v = string(b)
+	default:
+		extra.RegisterFuzzyDecoders()
+		return json.NewDecoder(res.Body).Decode(&result)
 	}
-
-	err = json.NewDecoder(res.Body).Decode(&result)
 
 	return nil
 }
