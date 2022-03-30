@@ -35,7 +35,7 @@ package v4
 
 import (
 	"fmt"
-	"github.com/tianying484/looker/rtl"
+	"github.com/tianying484/looker/v4/rtl"
 	"net/url"
 	"time"
 )

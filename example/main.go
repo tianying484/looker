@@ -5,8 +5,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/tianying484/looker/rtl"
-	v4 "github.com/tianying484/looker/sdk/v4"
+	"github.com/tianying484/looker/v4/rtl"
+	v4 "github.com/tianying484/looker/v4/sdk/v4"
 )
 
 func check(err error) {
