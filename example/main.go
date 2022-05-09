@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/tianying484/looker/v4/rtl"
@@ -53,50 +52,6 @@ func printAboutMe(sdk *v4.LookerSDK) {
 	}
 }
 
-func printQuery(sdk *v4.LookerSDK) {
-	var (
-		lookerId = "737"
-		limit    = int64(100)
-		cache    = false
-	)
-
-	looker, err := sdk.Look(lookerId, "", nil)
-	if err != nil {
-		panic(err)
-	}
-
-	query, err := sdk.CreateQuery(v4.WriteQuery{
-		Model:         looker.Query.Model,
-		View:          looker.Query.View,
-		Fields:        looker.Query.Fields,
-		Pivots:        looker.Query.Pivots,
-		FillFields:    looker.Query.FillFields,
-		Filters:       looker.Query.Filters,
-		Sorts:         looker.Query.Sorts,
-		Limit:         looker.Query.Limit,
-		ColumnLimit:   looker.Query.ColumnLimit,
-		Total:         looker.Query.Total,
-		RowTotal:      looker.Query.RowTotal,
-		Subtotals:     looker.Query.Subtotals,
-		DynamicFields: looker.Query.DynamicFields,
-		QueryTimezone: looker.Query.QueryTimezone,
-	}, "", nil)
-	if err != nil {
-		panic(err)
-	}
-
-	result, err := sdk.RunQuery(v4.RequestRunQuery{
-		QueryId:      *query.Id,
-		ResultFormat: "csv",
-		Limit:        &limit,
-		Cache:        &cache,
-	}, nil)
-	if err != nil {
-		panic(err)
-	}
-	log.Println(result)
-}
-
 func main() {
 	// Default config file location
 	lookerIniPath := "/opt/looker.ini"
@@ -118,5 +73,4 @@ func main() {
 
 	printAboutMe(sdk)
 
-	printQuery(sdk)
 }
